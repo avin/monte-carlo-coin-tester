@@ -1,6 +1,5 @@
 import { createMemo, createSignal, createEffect, onCleanup } from 'solid-js'
 import {
-  CategoryScale,
   Chart as ChartJS,
   Decimation,
   Filler,
@@ -16,7 +15,6 @@ import {
 import './App.css'
 
 ChartJS.register(
-  CategoryScale,
   LinearScale,
   LineController,
   PointElement,
@@ -34,7 +32,6 @@ type SimulationParams = {
 }
 
 type SimulationResult = SimulationParams & {
-  id: number
   points: ScatterDataPoint[]
   wins: number
   losses: number
@@ -55,10 +52,7 @@ const clampNumber = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max)
 }
 
-const simulateCoinStrategy = (
-  params: SimulationParams,
-  id = Date.now(),
-): SimulationResult => {
+const simulateCoinStrategy = (params: SimulationParams): SimulationResult => {
   const winAmount = clampNumber(params.winAmount, 0, 1_000_000)
   const lossAmount = clampNumber(params.lossAmount, 0, 1_000_000)
   const tosses = Math.round(clampNumber(params.tosses, 1, 50_000))
@@ -89,7 +83,6 @@ const simulateCoinStrategy = (
   }
 
   return {
-    id,
     winAmount,
     lossAmount,
     tosses,
@@ -120,7 +113,7 @@ function App() {
   const [lossAmount, setLossAmount] = createSignal(DEFAULT_PARAMS.lossAmount)
   const [tosses, setTosses] = createSignal(DEFAULT_PARAMS.tosses)
   const [result, setResult] = createSignal(
-    simulateCoinStrategy(DEFAULT_PARAMS, 1),
+    simulateCoinStrategy(DEFAULT_PARAMS),
   )
 
   const expectedPerToss = createMemo(
